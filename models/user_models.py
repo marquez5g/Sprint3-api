@@ -2,15 +2,14 @@ from pydantic import BaseModel
 
 
 class UserIn(BaseModel):
-    nombres: str
+    """ id_usuario: int = 0
+    
     apellidos: str
-    tipo_documento: str
-    num_documento: int
-    direccion: str
-    telefono: int
+    documento: int
     email: str
-    password: str
-    username: str
+    """
+    documento: str
+    password: str 
     
 class UserOut(BaseModel):
     id_usuario: int

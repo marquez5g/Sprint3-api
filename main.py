@@ -1,5 +1,5 @@
-from db.user_db import UserInDB
-from db.user_db import database_users, generator
+from db.user_db import UserInDB, get_user
+from db.user_db import database_users#, generator
 from db.rooms_db import RoomsInDB
 from db.rooms_db import update_room, get_room, database_rooms
 from models.user_models import UserIn, UserOut
@@ -14,13 +14,26 @@ app = FastAPI()
 origins = [
     "http://localhost.tiangolo.com", "https://localhost.tiangolo.com",
     "http://localhost", "http://localhost:8080",
-    "https://cajero-app16.herokuapp.com"
+    "https://cajero-app16.herokuapp.com", "http://localhost:8081"
 ]
 
 app.add_middleware(
     CORSMiddleware, allow_origins=origins,
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
+
+@app.post("/user/auth/")
+async def auth_user(user_in: UserIn):
+
+    user_in_db = get_user(user_in.documento)
+    print(user_in)
+    if user_in_db == None:
+        raise HTTPException(status_code=404, detail="El usuario no existe")
+
+    if user_in_db.password != user_in.password:
+        return  {"Autenticado": False}
+
+    return  {"Autenticado": True}
 
 @app.get("/",)
 def find_all_rooms():
@@ -41,16 +54,16 @@ async def get_room_id(id_habitacion: int):
     return room_out
 
 
-@app.get("/users/", response_model=Dict[int, UserInDB], response_model_exclude={"username","password"})
+@app.get("/users/", response_model=Dict[str, UserInDB], response_model_exclude={"username","password"})
 async def get_all_users():
     return database_users
 
 
 @app.post("/users/", response_model=UserInDB)
 async def save_user(user_in_db: UserInDB):
-    generator["id_usuario"] = generator["id_usuario"] + 1
-    user_in_db.id_usuario = generator["id_usuario"]
-    database_users[user_in_db.id_usuario] = user_in_db
+    #generator["id_usuario"] = generator["id_usuario"] + 1
+    #user_in_db.id_usuario = generator["id_usuario"]
+    database_users[user_in_db.documento] = user_in_db
     return user_in_db
 
 
