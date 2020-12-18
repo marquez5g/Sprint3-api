@@ -14,7 +14,7 @@ app = FastAPI()
 origins = [
     "http://localhost.tiangolo.com", "https://localhost.tiangolo.com",
     "http://localhost", "http://localhost:8080",
-    "https://cajero-app16.herokuapp.com", "http://localhost:8081", "https://hotel-app-5g.herokuapp.com/"
+    "https://cajero-app16.herokuapp.com", "http://localhost:8081", "https://hotel-app-5g.herokuapp.com"
 ]
 
 app.add_middleware(
